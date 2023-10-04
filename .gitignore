@@ -2,3 +2,4 @@
 chrome
 chromedriver
 captcha.png
+__pycache__
