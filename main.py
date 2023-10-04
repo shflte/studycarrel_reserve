@@ -9,10 +9,10 @@ import subprocess
 import os
 import time
 
-from page_objects import LOGIN_PAGE
 from login import login
 from navigation import navigation
 from date import select_date
+from reserve import reserve
 
 load_dotenv()
 
@@ -33,10 +33,29 @@ driver = webdriver.Chrome(options=chrome_options)
 driver.maximize_window()
 
 login(driver, account, password)
-navigation(driver)
-select_date(driver)
-# select date
-# choose time slots
+
+room = "201"
+time_slots = [
+    (3, 10),
+    (11, 18),
+    (19, 26)
+]
+for time_slot in time_slots:
+    navigation(driver)
+    select_date(driver)
+    reserve(driver, room, time_slot)
+    breakpoint()
+
+'''
+status of reserving:
+    success: 0
+    reserved: -1
+    not available: -2
+
+delete reservation:
+    success: 0
+    error: -1
+'''
 # delete reservation
 
 breakpoint()
