@@ -24,7 +24,7 @@ class RESERVE_RELATED_PAGE:
     submit_reader_id_button = "//input[@name='schBtn']"
 
     # request for all available rooms
-    request_all_button = "//input[@name='schBtn']"
+    request_all_button = "//input[@name='sendAllBtn']"
 
     # select room
     room_label = "//label[@title='{}']"

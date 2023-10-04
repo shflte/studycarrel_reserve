@@ -36,40 +36,17 @@ def navigation(driver: webdriver.Chrome):
     carrel_room_select.click()
     agree_check_box.click()
     next_button.click()
-    breakpoint()
 
     # enter reader id page
-    iframe_element = driver.find_element(By.XPATH, RESERVED_LIST_PAGE.iframe)
-    driver.switch_to.frame(iframe_element)
     reader_id_input_1 = driver.find_elements(By.XPATH, RESERVE_RELATED_PAGE.reader_id_input)[0]
     reader_id_input_2 = driver.find_elements(By.XPATH, RESERVE_RELATED_PAGE.reader_id_input)[1]
     submit_reader_id_button = driver.find_element(By.XPATH, RESERVE_RELATED_PAGE.submit_reader_id_button)
     reader_id_input_1.send_keys(reader_id_1)
     reader_id_input_2.send_keys(reader_id_2)
     submit_reader_id_button.click()
-    breakpoint()
 
     # request for all available rooms
-    iframe_element = driver.find_element(By.XPATH, RESERVED_LIST_PAGE.iframe)
-    driver.switch_to.frame(iframe_element)
     request_all_button = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVE_RELATED_PAGE.request_all_button)))
     request_all_button.click()
 
-
-
-
-
-
-    # carrel_room_select = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVE_RELATED_PAGE.carrel_room_select)))
-    # agree_check_box = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVE_RELATED_PAGE.agree_check_box)))
-    # next_button = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVE_RELATED_PAGE.next_button)))
-    # reader_id_input = wait.until(EC.presence_of_element_located((By.XPATH, RESERVE_RELATED_PAGE.reader_id_input)))
-    # print(reader_id_input)
-    while True:
-        time.sleep(1)
-    submit_reader_id_button = driver.find_element(By.XPATH, RESERVE_RELATED_PAGE.submit_reader_id_button)
-    request_all_button = driver.find_element(By.XPATH, RESERVE_RELATED_PAGE.request_all_button)
-
-
-
-
+    breakpoint()

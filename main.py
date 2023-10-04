@@ -34,7 +34,6 @@ driver.maximize_window()
 login(driver, account, password)
 navigation(driver)
 
-while True:
-    time.sleep(1)
+breakpoint()
 
 driver.quit()
