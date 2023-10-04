@@ -20,7 +20,7 @@ class RESERVE_RELATED_PAGE:
 
     # enter reader id
     reader_id_input = "//input[@name='schid' and @type='text']"
-    next_button = "//input[@name='schBtn']"
+    submit_reader_id_button = "//input[@name='schBtn']"
 
     # request for all available rooms
     request_all_button = "//input[@name='schBtn']"

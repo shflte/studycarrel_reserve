@@ -11,8 +11,11 @@ import time
 
 from page_objects import LOGIN_PAGE
 from login import login
+from navigation import navigation
 
 load_dotenv()
+
+# room_id = "202"
 
 chrome_driver_path = os.getenv("CHROME_DRIVER_PATH")
 login_url = os.getenv("LOGIN_URL")
@@ -33,9 +36,10 @@ driver.maximize_window()
 
 url = login_url
 driver.get(url)
-# wait for page to load 
+# wait for page to load
 
 login(driver, account, password)
+navigation(driver)
 
 while True:
     time.sleep(1)

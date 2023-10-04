@@ -6,6 +6,7 @@ import time
 import base64
 
 def get_captcha_value():
+    return input("captcha value: ")
     load_dotenv()
 
     api_key = os.getenv("2CAPTCHA_API_KEY")
