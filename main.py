@@ -25,6 +25,9 @@ if not chrome_driver_path:
 chrome_options = Options()
 chrome_options.binary_location = chrome_driver_path
 
+if os.getenv("HEADLESS") == "True":
+    chrome_options.add_argument("--headless")
+
 driver = webdriver.Chrome(options=chrome_options)
 
 url = login_url
