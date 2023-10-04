@@ -9,13 +9,14 @@ class LOGIN_PAGE:
     submit_button = "//input[@type='submit']"
 
 class RESERVED_LIST_PAGE:
+    iframe = "//iframe"
     add_button = "//input[@name='addbtn']"
     del_button = "//input[@name='delbtn']"
 
 class RESERVE_RELATED_PAGE:
     # notice
     carrel_room_select = "//input[@name='space']"
-    agree_check_box = "//input[@name='agree']"
+    agree_check_box = "//input[@name='checkNote']"
     next_button = "//input[@name='sendbtn']"
 
     # enter reader id

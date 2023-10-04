@@ -8,8 +8,14 @@ import subprocess
 from page_objects import LOGIN_PAGE
 
 from captcha_hack_2captcha import get_captcha_value
+from dotenv import load_dotenv
+import os
 
 def login(driver: webdriver.Chrome, username: str, password: str):
+    load_dotenv()
+    url = os.getenv("LOGIN_URL")
+    driver.get(url)
+
     wait = WebDriverWait(driver, 10)
     captcha_img = wait.until(EC.presence_of_element_located((By.XPATH, LOGIN_PAGE.captcha_img)))
 

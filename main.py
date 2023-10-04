@@ -15,10 +15,7 @@ from navigation import navigation
 
 load_dotenv()
 
-# room_id = "202"
-
 chrome_driver_path = os.getenv("CHROME_DRIVER_PATH")
-login_url = os.getenv("LOGIN_URL")
 account = os.getenv("ACCOUNT")
 password = os.getenv("PASSWORD")
 
@@ -33,10 +30,6 @@ if os.getenv("HEADLESS") == "True":
 
 driver = webdriver.Chrome(options=chrome_options)
 driver.maximize_window()
-
-url = login_url
-driver.get(url)
-# wait for page to load
 
 login(driver, account, password)
 navigation(driver)

@@ -3,3 +3,5 @@ chrome
 chromedriver
 captcha.png
 __pycache__
+venv
+```
