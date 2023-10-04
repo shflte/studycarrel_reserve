@@ -44,9 +44,3 @@ def navigation(driver: webdriver.Chrome):
     reader_id_input_1.send_keys(reader_id_1)
     reader_id_input_2.send_keys(reader_id_2)
     submit_reader_id_button.click()
-
-    # request for all available rooms
-    request_all_button = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVE_RELATED_PAGE.request_all_button)))
-    request_all_button.click()
-
-    breakpoint()

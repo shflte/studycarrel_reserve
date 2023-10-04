@@ -12,6 +12,7 @@ import time
 from page_objects import LOGIN_PAGE
 from login import login
 from navigation import navigation
+from date import select_date
 
 load_dotenv()
 
@@ -33,6 +34,10 @@ driver.maximize_window()
 
 login(driver, account, password)
 navigation(driver)
+select_date(driver)
+# select date
+# choose time slots
+# delete reservation
 
 breakpoint()
 

@@ -1,4 +1,5 @@
-# XPATH
+import arrow
+
 class LOGIN_PAGE:
     username_input = "//input[@name='username']"
     password_input = "//input[@name='password']"
@@ -23,9 +24,6 @@ class RESERVE_RELATED_PAGE:
     reader_id_input = "//input[@name='schid' and @type='text']"
     submit_reader_id_button = "//input[@name='schBtn']"
 
-    # request for all available rooms
-    request_all_button = "//input[@name='sendAllBtn']"
-
     # select room
     room_label = "//label[@title='{}']"
     room_select = "/input"
@@ -35,3 +33,17 @@ class RESERVE_RELATED_PAGE:
         return RESERVE_RELATED_PAGE.room_label.format(room_id) + RESERVE_RELATED_PAGE.room_select
     def get_time_slots_xpath(room_id):
         return RESERVE_RELATED_PAGE.room_label.format(room_id) + RESERVE_RELATED_PAGE.time_slots
+
+class DATE_PAGE:
+    # request for all available rooms
+    request_all_button = "//input[@name='sendAllBtn']"
+
+    select_date_toggle = "//input[@name='sdate']"
+    calendar = "//div[@class='calendar']"
+
+    calendar_month = "//a[@title='Today']"
+    calendar_date = "//a[.='{}']"
+    calendar_next_month = calendar + "//a[@class='monthR']"
+
+    def get_calendar_date_xpath(date: int):
+        return DATE_PAGE.calendar + DATE_PAGE.calendar_date.format(date)
