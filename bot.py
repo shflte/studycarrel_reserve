@@ -146,6 +146,9 @@ async def on_ready():
             f"Time: [{cancel_symbol[status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
         print(message)
         await channel.send(message)
+    
+    # terminate the bot
+    await client.close()
 
 # Run the bot
 client.run(DISCORD_TOKEN)
