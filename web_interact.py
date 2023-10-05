@@ -20,6 +20,7 @@ status of reserving:
     success: 0
     reserved: -1
     not available: -2
+    limit exceeded: -3
 
 delete reservation:
     success: 0
@@ -89,10 +90,10 @@ def get_reservation_table() -> list:
 #     status = cancel_reservation()
 #     print(status)
 
-# if __name__ == "__main__":
-#     status = reserve_carrel("201", arrow.now().shift(days=1), (3, 10))
-#     print(status)
-
 if __name__ == "__main__":
-    reservations = get_reservation_table()
-    print(reservations)
+    status = reserve_carrel("201", arrow.now().shift(days=10), (3, 10))
+    print(status)
+
+# if __name__ == "__main__":
+#     reservations = get_reservation_table()
+#     print(reservations)

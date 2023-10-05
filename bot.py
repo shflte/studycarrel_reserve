@@ -33,7 +33,8 @@ status of reserving:
     reserved successfully: 0
     not available (reserved): -1
     not available (no such time slot): -2
-    unexpected error: -3
+    limit exceeded: -3
+    unexpected error: -4
 
 delete reservation:
     success: 0
@@ -47,7 +48,8 @@ reserve_symbol = {
     0: "啊哈!預約嚕!",
     -1: "已經被預約了",
     -2: "沒有這個時段",
-    -3: "完蛋 有鬼"
+    -3: "借太多囉",
+    -4: "完蛋 有鬼"
 }
 
 cancel_symbol = {
@@ -106,7 +108,7 @@ async def on_ready():
             try:
                 status = reserve_carrel(room, date, time_slots[i])
             except:
-                status = -3
+                status = -4
             message = "預約結果：\n"
             message += f"{reserve_symbol[status]}\n"
             message += reservation_str()
