@@ -7,8 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import subprocess
 from page_objects import LOGIN_PAGE
 
-# from captcha_hack_2captcha import get_captcha_value
-from captcha_hack import get_captcha_value
+from captcha_hack_2captcha import get_captcha_value
+# from captcha_hack import get_captcha_value
 from dotenv import load_dotenv
 import os
 
@@ -22,7 +22,7 @@ def login(driver: webdriver.Chrome, username: str, password: str) -> int:
 
     # download captcha image and save it
     img_url = captcha_img.get_attribute("src")
-    curl_command = f"curl -o /home/shflte/studycarrel_reserve/captcha.png {img_url}"
+    curl_command = f"curl -o captcha.png {img_url}"
     subprocess.run(curl_command, shell=True, check=True)
 
     # login

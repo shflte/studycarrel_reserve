@@ -13,6 +13,7 @@ from navigation import navigation
 from date import select_date
 from reserve import reserve
 from cancel import cancel
+from reservation_table import reservation_table
 
 '''
 status of reserving:
@@ -52,7 +53,7 @@ def driver_login(driver: webdriver.Chrome):
     if logged_in == -1:
         raise Exception("Login failed")
 
-def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slot: tuple) -> list:
+def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slot: tuple) -> int:
     load_dotenv()
 
     driver = get_driver()
@@ -74,10 +75,24 @@ def cancel_reservation() -> int:
     driver.quit()
     return status
 
-if __name__ == "__main__":
-    status = cancel_reservation()
-    print(status)
+# return list of lists of string
+def get_reservation_table() -> list:
+    driver = get_driver()
+    driver_login(driver)
+
+    reservations = reservation_table(driver)
+
+    driver.quit()
+    return reservations
+
+# if __name__ == "__main__":
+#     status = cancel_reservation()
+#     print(status)
 
 # if __name__ == "__main__":
 #     status = reserve_carrel("201", arrow.now().shift(days=1), (3, 10))
 #     print(status)
+
+if __name__ == "__main__":
+    reservations = get_reservation_table()
+    print(reservations)

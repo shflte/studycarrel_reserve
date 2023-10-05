@@ -6,7 +6,8 @@ import arrow
 
 from web_interact import (
     reserve_carrel,
-    cancel_reservation
+    cancel_reservation,
+    get_reservation_table
 )
 
 time_slot_table = {
@@ -55,6 +56,7 @@ client = discord.Client(intents=intents)
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reserve", action="store_true", help="reserve a carrel")
 parser.add_argument("-c", "--cancel", action="store_true", help="cancel a reservation")
+parser.add_argument("-t", "--table", action="store_true", help="get reservation table")
 args = parser.parse_args()
 
 '''
@@ -159,6 +161,18 @@ async def on_ready():
     
         if retry_count == 0:
             message += error_message
+
+        print(message)
+        await channel.send(message)
+
+    elif args.table:
+        message = "------討論室預約表------\n"
+        try:
+            reservations = get_reservation_table()
+            for reservation in reservations:
+                message += f"{reservation[0]} {reservation[1]} {reservation[2]}\n"
+        except:
+            message += "完蛋 有鬼 table壞了"
 
         print(message)
         await channel.send(message)

@@ -16,10 +16,18 @@ class RESERVED_LIST_PAGE:
 
     reservation_list = "//tbody//tr"
     reservation_time = "/td[5]"
+    reserved_room = "/td[3]"
+    reservation_status = "/td[6]/span"
     reservation_cancel_checkbox = "//input"
 
     def get_reservation_time_xpath(index: int):
         return RESERVED_LIST_PAGE.reservation_list + f"[{index}]" + RESERVED_LIST_PAGE.reservation_time
+    
+    def get_reserved_room_xpath(index: int):
+        return RESERVED_LIST_PAGE.reservation_list + f"[{index}]" + RESERVED_LIST_PAGE.reserved_room
+    
+    def get_reservation_status_xpath(index: int):
+        return RESERVED_LIST_PAGE.reservation_list + f"[{index}]" + RESERVED_LIST_PAGE.reservation_status
     
     def get_reservation_cancel_checkbox_xpath(index: int):
         return RESERVED_LIST_PAGE.reservation_list + f"[{index}]" + RESERVED_LIST_PAGE.reservation_cancel_checkbox

@@ -6,7 +6,7 @@ import torchvision
 from torchvision import transforms
 
 def get_captcha_value():
-    TEST_PATH = "/home/shflte/studycarrel_reserve"
+    TEST_PATH = "."
     device = "cpu"
     IMAGE_NAME = "captcha.png"
 
