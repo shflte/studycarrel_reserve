@@ -28,6 +28,7 @@ delete reservation:
 '''
 
 def get_driver() -> webdriver.Chrome:
+    load_dotenv()
     chrome_options = Options()
 
     if os.getenv("HEADLESS") == "True":
@@ -38,6 +39,7 @@ def get_driver() -> webdriver.Chrome:
     return driver
 
 def driver_login(driver: webdriver.Chrome):
+    load_dotenv()
     account = os.getenv("ACCOUNT")
     password = os.getenv("PASSWORD")
 
