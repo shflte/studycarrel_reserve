@@ -52,7 +52,7 @@ def driver_login(driver: webdriver.Chrome):
     if logged_in == -1:
         raise Exception("Login failed")
 
-def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slot: tuple) -> list:
+def reserve_carrel():
     load_dotenv()
 
     driver = get_driver()

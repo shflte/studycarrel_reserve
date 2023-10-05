@@ -73,35 +73,18 @@ delete reservation:
 
 # Define a dictionary of reserve status
 reserve_symbol = {
-    0: "+",
-    -1: "*",
-    -2: "∅",
-    -3: "!"
+    0: "啊哈！預約嚕！",
+    -1: "已經預約過了。",
+    -2: "沒有這個時段。",
+    -3: "完蛋，有鬼。"
 }
 
 cancel_symbol = {
-    0: "-",
-    1: "∅",
-    2: "~",
-    -1: "!"
+    0: "啊哈！取消嚕！",
+    1: "沒有預約。",
+    2: "沒有快到預約時間的預約。",
+    -1: "完蛋，有鬼。"
 }
-
-def get_reservation_time() -> arrow.Arrow:
-    reservation = arrow.now()
-    if reservation.minute < 30:
-        reservation = reservation.replace(minute=0)
-    else:
-        reservation = reservation.replace(minute=30)
-    return reservation
-
-def date_to_time_slot_pair(date: arrow.Arrow) -> tuple:
-    time_slot = (date.hour - 8) * 2
-    if date.minute >= 30:
-        time_slot += 1
-    
-    if time_slot + 7 > 27:
-        return (time_slot, -1)
-    return (time_slot, time_slot + 7)
 
 # Define an event handler for when the bot is ready
 @client.event
@@ -111,26 +94,17 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     print(args)
         
-    room = "201"
     if args.reserve:
-        time_slots = [
-            (3, 10),
-            (11, 18),
-            (19, 26)
-        ]
-        date = arrow.now().shift(days=10)
+        date = arrow.now().shift(days=3)
 
-        for i in range(len(time_slots)):
-            try:
-                status = reserve_carrel(room, date, time_slots[i])
-            except:
-                status = -3
-            message = \
-                f"------討論室 [{room}] 預約狀態------\n" \
-                f"Date: {date.format('YYYY-MM-DD')}\n" \
-                f"Time: [{reserve_symbol[status]}] {time_slot_table[time_slots[i][0]]} ~ {time_slot_table[time_slots[i][1]]}\n"
-            print(message)
-            await channel.send(message)
+        try:
+            status = reserve_carrel(date)
+        except:
+            status = -3
+        message = f"---------------------------\n"
+        message += f" 預約狀態: {reserve_symbol[status]}\n"
+        print(message)
+        await channel.send(message)
 
     elif args.cancel:
         retry_count = 5
@@ -149,13 +123,8 @@ async def on_ready():
         if retry_count == 0:
             status = -1
 
-        reservation = get_reservation_time()
-        time_slots = date_to_time_slot_pair(reservation)
-
-        message = \
-            f"------討論室 [{room}] 取消狀態------\n" \
-            f"Date: {reservation.format('YYYY-MM-DD')}\n" \
-            f"Time: [{cancel_symbol[status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
+        message = f"---------------------------\n"
+        message += f" 預約狀態: {reserve_symbol[status]}\n"
     
         if retry_count == 0:
             message += error_message
