@@ -114,6 +114,7 @@ async def on_ready():
             message += reservation_str()
             print(message)
             await channel.send(message)
+        await client.close()
 
     elif args.cancel:
         retry_count = 5
@@ -143,6 +144,7 @@ async def on_ready():
 
         print(message)
         await channel.send(message)
+        await client.close()
 
     elif args.table:
         message = "預約列表：\n"
@@ -152,7 +154,21 @@ async def on_ready():
         await channel.send(message)
     
     # terminate the bot
-    await client.close()
+
+# when a message is sent
+@client.event
+async def on_message(message):
+    channel = message.channel
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('!'):
+        if message.content == '!table':
+            table_str = "預約列表：\n"
+            table_str += reservation_str()
+
+            print(table_str)
+            await channel.send(table_str)
 
 # Run the bot
 client.run(DISCORD_TOKEN)
