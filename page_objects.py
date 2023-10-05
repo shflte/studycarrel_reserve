@@ -12,6 +12,8 @@ class RESERVED_LIST_PAGE:
     add_button = "//input[@name='addbtn']"
     del_button = "//input[@name='delbtn']"
 
+    confirm_button = "//input[@name='setbtn']"
+
     reservation_list = "//tbody//tr"
     reservation_time = "/td[5]"
     reservation_cancel_checkbox = "//input"
