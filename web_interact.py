@@ -43,7 +43,14 @@ def driver_login(driver: webdriver.Chrome):
     account = os.getenv("ACCOUNT")
     password = os.getenv("PASSWORD")
 
-    login(driver, account, password)
+    logged_in = -1
+    retry_count = 5
+    while logged_in == -1 and retry_count > 0:
+        logged_in = login(driver, account, password)
+        retry_count -= 1
+    
+    if logged_in == -1:
+        raise Exception("Login failed")
 
 def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> list:
     load_dotenv()

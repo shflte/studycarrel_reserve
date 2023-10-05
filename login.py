@@ -12,7 +12,7 @@ from captcha_hack_2captcha import get_captcha_value
 from dotenv import load_dotenv
 import os
 
-def login(driver: webdriver.Chrome, username: str, password: str):
+def login(driver: webdriver.Chrome, username: str, password: str) -> int:
     load_dotenv()
     url = os.getenv("LOGIN_URL")
     driver.get(url)
@@ -33,6 +33,13 @@ def login(driver: webdriver.Chrome, username: str, password: str):
 
     username_input.send_keys(username)
     password_input.send_keys(password)
+
     captcha_value = get_captcha_value()
     captcha_input.send_keys(captcha_value)
     driver.execute_script("arguments[0].click();", submit_button)
+
+    try:
+        wait.until(EC.presence_of_element_located((By.XPATH, LOGIN_PAGE.captcha_img)))
+        return -1
+    except:
+        return 0
