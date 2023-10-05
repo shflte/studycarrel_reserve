@@ -11,11 +11,6 @@ from page_objects import (
     DATE_PAGE
 )
 
-'''
-time slot table
-
-'''
-
 def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple) -> int:
     wait = WebDriverWait(driver, 10)
     status = 0

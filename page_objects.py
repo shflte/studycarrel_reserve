@@ -1,5 +1,3 @@
-import arrow
-
 class LOGIN_PAGE:
     username_input = "//input[@name='username']"
     password_input = "//input[@name='password']"

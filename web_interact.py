@@ -6,13 +6,14 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from dotenv import load_dotenv
 import os
+import arrow
 
 from login import login
 from navigation import navigation
 from date import select_date
 from reserve import reserve
 
-def reserve_carrel(room: str, time_slots: tuple) -> list:
+def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> list:
     load_dotenv()
 
     account = os.getenv("ACCOUNT")
@@ -31,7 +32,7 @@ def reserve_carrel(room: str, time_slots: tuple) -> list:
     return_status = []
     for time_slot in time_slots:
         navigation(driver)
-        select_date(driver)
+        select_date(driver, date)
         status = reserve(driver, room, time_slot)
         return_status.append(status)
 
@@ -48,6 +49,7 @@ def reserve_carrel(room: str, time_slots: tuple) -> list:
         error: -1
     '''
     # delete reservation
+    # captcha retry
 
     driver.quit()
     return return_status

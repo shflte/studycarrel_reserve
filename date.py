@@ -7,16 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import arrow
 from page_objects import DATE_PAGE
 
-def get_next_n_day(n: int) -> arrow.arrow.Arrow:
-    return arrow.now().shift(days=n)
-
 def same_month(date1: arrow.arrow.Arrow, date2: arrow.arrow.Arrow) -> bool:
     return date1.month == date2.month
 
-def select_date(driver):
+def select_date(driver, date: arrow.arrow.Arrow):
     wait = WebDriverWait(driver, 10)
-
-    date = get_next_n_day(10)
 
     # toggle calendar
     select_date_toggle = wait.until(EC.element_to_be_clickable((By.XPATH, DATE_PAGE.select_date_toggle)))
