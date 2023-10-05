@@ -128,15 +128,27 @@ async def on_ready():
             message = \
                 f"------討論室 [{room}] 預約狀態------\n" \
                 f"Date: {date.format('YYYY-MM-DD')}\n" \
-                f"Time: [{reserve_symbol[status]}] {time_slot_table[time_slots[i][0]]} - {time_slot_table[time_slots[i][1]]}\n"
+                f"Time: [{reserve_symbol[status]}] {time_slot_table[time_slots[i][0]]} ~ {time_slot_table[time_slots[i][1]]}\n"
             print(message)
             await channel.send(message)
 
     elif args.cancel:
-        try:
-            status = cancel_reservation()
-        except:
+        retry_count = 5
+        error_message = ""
+
+        while retry_count > 0:
+            try:
+                status = cancel_reservation()
+                break
+            except Exception as e:
+                error_message += f"Error: {e}\n"
+                print(error_message)
+
+            retry_count -= 1
+
+        if retry_count == 0:
             status = -1
+
         reservation = get_reservation_time()
         time_slots = date_to_time_slot_pair(reservation)
 
@@ -144,6 +156,10 @@ async def on_ready():
             f"------討論室 [{room}] 取消狀態------\n" \
             f"Date: {reservation.format('YYYY-MM-DD')}\n" \
             f"Time: [{cancel_symbol[status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
+    
+        if retry_count == 0:
+            message += error_message
+
         print(message)
         await channel.send(message)
     

@@ -6,7 +6,7 @@ import torchvision
 from torchvision import transforms
 
 def get_captcha_value():
-    TEST_PATH = "."
+    TEST_PATH = "/home/shflte/studycarrel_reserve"
     device = "cpu"
     IMAGE_NAME = "captcha.png"
 
@@ -61,7 +61,7 @@ def get_captcha_value():
 
     model3 = torchvision.models.resnet18(pretrained=True).to(device)
     model3.fc = nn.Linear(in_features=512, out_features=40, bias=True).to(device)
-    model3.load_state_dict(torch.load("./captcha_model", map_location=torch.device('cpu')))
+    model3.load_state_dict(torch.load("/home/shflte/studycarrel_reserve/captcha_model", map_location=torch.device('cpu')))
     model3.eval()
 
     table = ['0','1','2','3','4','5','6','7','8','9']

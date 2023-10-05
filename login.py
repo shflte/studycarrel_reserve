@@ -17,12 +17,12 @@ def login(driver: webdriver.Chrome, username: str, password: str) -> int:
     url = os.getenv("LOGIN_URL")
     driver.get(url)
 
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 5)
     captcha_img = wait.until(EC.presence_of_element_located((By.XPATH, LOGIN_PAGE.captcha_img)))
 
     # download captcha image and save it
     img_url = captcha_img.get_attribute("src")
-    curl_command = f"curl -o captcha.png {img_url}"
+    curl_command = f"curl -o /home/shflte/studycarrel_reserve/captcha.png {img_url}"
     subprocess.run(curl_command, shell=True, check=True)
 
     # login
@@ -35,6 +35,9 @@ def login(driver: webdriver.Chrome, username: str, password: str) -> int:
     password_input.send_keys(password)
 
     captcha_value = get_captcha_value()
+
+    # os.rename("/home/shflte/studycarrel_reserve/captcha.png", f"/home/shflte/studycarrel_reserve/{captcha_value}.png")
+
     captcha_input.send_keys(captcha_value)
     driver.execute_script("arguments[0].click();", submit_button)
 
