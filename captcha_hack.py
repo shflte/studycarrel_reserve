@@ -1,27 +1,14 @@
-import csv
-import cv2
-import numpy as np
-import random
-import os
-
-from tqdm import tqdm
-
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision.models import resnet50
 import torchvision
 from torchvision import transforms
-import json
-from PIL import Image
-import re
-import heapq
-import joblib
 
-def ImageToString(image_name):
+def get_captcha_value():
     TEST_PATH = "."
     device = "cpu"
-    IMAGE_NAME = image_name
+    IMAGE_NAME = "captcha.png"
 
     class Task3Dataset(Dataset):
         def __init__(self, data, root, return_filename=False):
@@ -91,9 +78,5 @@ def ImageToString(image_name):
             ans = ans + table[large2_pred]
             ans = ans + table[large3_pred]
             ans = ans + table[large4_pred]
-            return ans
+            return int(ans)
         del image, filenames
-
-
-ans = ImageToString('14.png')
-print(ans)
