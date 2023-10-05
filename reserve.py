@@ -45,7 +45,6 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: tuple) -> int:
             status = -1
 
     # click if not disabled and present by checking status
-    breakpoint()
     if status == 0:
         time_slots_checkbox_1.click()
         time_slots_checkbox_2.click()

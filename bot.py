@@ -102,7 +102,7 @@ async def on_ready():
             (11, 18),
             (19, 26)
         ]
-        date = arrow.now().shift(days=10)
+        date = arrow.now().shift(days=2)
 
         for i in range(len(time_slots)):
             try:
