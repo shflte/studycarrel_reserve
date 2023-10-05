@@ -10,37 +10,6 @@ from web_interact import (
     get_reservation_table
 )
 
-time_slot_table = {
-    1: "08:30-08:59",
-    2: "09:00-09:29",
-    3: "09:30-09:59",
-    4: "10:00-10:29",
-    5: "10:30-10:59",
-    6: "11:00-11:29",
-    7: "11:30-11:59",
-    8: "12:00-12:29",
-    9: "12:30-12:59",
-    10: "13:00-13:29",
-    11: "13:30-13:59",
-    12: "14:00-14:29",
-    13: "14:30-14:59",
-    14: "15:00-15:29",
-    15: "15:30-15:59",
-    16: "16:00-16:29",
-    17: "16:30-16:59",
-    18: "17:00-17:29",
-    19: "17:30-17:59",
-    20: "18:00-18:29",
-    21: "18:30-18:59",
-    22: "19:00-19:29",
-    23: "19:30-19:59",
-    24: "20:00-20:29",
-    25: "20:30-20:59",
-    26: "21:00-21:29",
-    27: "21:30-21:59",
-    -1: "-"
-}
-
 load_dotenv()  # Load environment variables from .env file
 
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
@@ -75,17 +44,17 @@ delete reservation:
 
 # Define a dictionary of reserve status
 reserve_symbol = {
-    0: "+",
-    -1: "*",
-    -2: "∅",
-    -3: "!"
+    0: "啊哈!預約嚕!",
+    -1: "已經被預約了",
+    -2: "沒有這個時段",
+    -3: "完蛋 有鬼"
 }
 
 cancel_symbol = {
-    0: "-",
-    1: "∅",
-    2: "~",
-    -1: "!"
+    0: "啊哈!取消嚕!",
+    1: "沒有任何預約",
+    2: "沒有快到期的預約",
+    -1: "完蛋 有鬼"
 }
 
 def get_reservation_time() -> arrow.Arrow:
@@ -104,6 +73,17 @@ def date_to_time_slot_pair(date: arrow.Arrow) -> tuple:
     if time_slot + 7 > 27:
         return (time_slot, -1)
     return (time_slot, time_slot + 7)
+
+def reservation_str() -> str:
+    message = "```\n"
+    try:
+        reservations = get_reservation_table()
+        for reservation in reservations:
+            message += f"{reservation[0]}, {reservation[1]}, {reservation[2]}\n"
+        message += "```"
+    except:
+        message += "完蛋 有鬼 table壞了"
+    return message
 
 # Define an event handler for when the bot is ready
 @client.event
@@ -127,10 +107,9 @@ async def on_ready():
                 status = reserve_carrel(room, date, time_slots[i])
             except:
                 status = -3
-            message = \
-                f"------討論室 [{room}] 預約狀態------\n" \
-                f"Date: {date.format('YYYY-MM-DD')}\n" \
-                f"Time: [{reserve_symbol[status]}] {time_slot_table[time_slots[i][0]]} ~ {time_slot_table[time_slots[i][1]]}\n"
+            message = "預約結果：\n"
+            message += f"{reserve_symbol[status]}\n"
+            message += reservation_str()
             print(message)
             await channel.send(message)
 
@@ -154,11 +133,9 @@ async def on_ready():
         reservation = get_reservation_time()
         time_slots = date_to_time_slot_pair(reservation)
 
-        message = \
-            f"------討論室 [{room}] 取消狀態------\n" \
-            f"Date: {reservation.format('YYYY-MM-DD')}\n" \
-            f"Time: [{cancel_symbol[status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
-    
+        message = "取消結果：\n"
+        message += f"{cancel_symbol[status]}\n"
+        message += reservation_str()
         if retry_count == 0:
             message += error_message
 
@@ -166,13 +143,8 @@ async def on_ready():
         await channel.send(message)
 
     elif args.table:
-        message = "------討論室預約表------\n"
-        try:
-            reservations = get_reservation_table()
-            for reservation in reservations:
-                message += f"{reservation[0]} {reservation[1]} {reservation[2]}\n"
-        except:
-            message += "完蛋 有鬼 table壞了"
+        message = "預約列表：\n"
+        message += reservation_str()
 
         print(message)
         await channel.send(message)
