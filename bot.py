@@ -4,7 +4,10 @@ import discord
 import argparse
 import arrow
 
-from web_interact import reserve_carrel
+from web_interact import (
+    reserve_carrel,
+    cancel_reservation
+)
 
 time_slot_table = {
     1: "08:30-08:59",
@@ -33,7 +36,8 @@ time_slot_table = {
     24: "20:00-20:29",
     25: "20:30-20:59",
     26: "21:00-21:29",
-    27: "21:30-21:59"
+    27: "21:30-21:59",
+    -1: "-"
 }
 
 load_dotenv()  # Load environment variables from .env file
@@ -55,51 +59,96 @@ args = parser.parse_args()
 
 '''
 status of reserving:
-    success: 0
-    reserved: -1
-    not available: -2
+    reserved successfully: 0
+    not available (reserved): -1
+    not available (no such time slot): -2
+    unexpected error: -3
 
 delete reservation:
     success: 0
-    error: -1
+    no reservation: 1
+    no expiring reservation: 2
+    unexpected error: -1
 '''
 
 # Define a dictionary of reserve status
-reserve_message = {
-    0: "啊哈！預約嚕！",
-    -1: "被約走ㄌ。",
-    -2: "沒有這個時段。"
+reserve_symbol = {
+    0: "+",
+    -1: "x",
+    -2: "x",
+    -3: "!"
 }
+
+cancel_symbol = {
+    0: "-",
+    1: "x",
+    2: "x",
+    -1: "!"
+}
+
+def get_reservation_time() -> arrow.Arrow:
+    reservation = arrow.now()
+    if reservation.minute < 30:
+        reservation = reservation.replace(minute=0)
+    else:
+        reservation = reservation.replace(minute=30)
+    return reservation
+
+def date_to_time_slot_pair(date: arrow.Arrow) -> tuple:
+    time_slot = (date.hour - 8) * 2
+    if date.minute >= 30:
+        time_slot += 1
+    
+    if time_slot + 7 > 27:
+        return (time_slot, -1)
+    return (time_slot, time_slot + 7)
 
 # Define an event handler for when the bot is ready
 @client.event
 async def on_ready():
+    guild = client.get_guild(int(SH_GUILD_ID))
+    channel = guild.get_channel(int(SH_TEXT_CHANNEL_ID))
     print('We have logged in as {0.user}'.format(client))
     print(args)
-    
+        
+    room = "201"
     if args.reserve:
-        room = "201"
         time_slots = [
             (3, 10),
             (11, 18),
             (19, 26)
         ]
         date = arrow.now().shift(days=10)
-        return_status = reserve_carrel(room, date, time_slots)
+        try:
+            return_status = reserve_carrel(room, date, time_slots)
+        except:
+            return_status = -3
 
-        # send message to discord
-        guild = client.get_guild(int(SH_GUILD_ID))
-        channel = guild.get_channel(int(SH_TEXT_CHANNEL_ID))
-        
+        message = \
+            f"Study carrel [{room}]\n" \
+            f"Date: {date.format('YYYY-MM-DD')}\n" \
+            "Time: \n"
         for i in range(len(time_slots)):
-            message = f"討論室{room}預約狀態：\n" \
-                        f"日期：{date.format('YYYY-MM-DD')}\n" \
-                        f"時間：{time_slot_table[time_slots[i][0]]} - {time_slot_table[time_slots[i][1]]}\n" \
-                        f"{reserve_message[return_status[i]]}\n"
+            message += f"[{reserve_symbol[return_status[i]]}] {time_slot_table[time_slots[i][0]]} - {time_slot_table[time_slots[i][1]]}\n"
             print(message)
-            await channel.send(message)
-    elif args.delete:
-        pass
+
+        await channel.send(message)
+
+    elif args.cancel:
+        try:
+            return_status = cancel_reservation()
+        except:
+            return_status = -1
+        reservation = get_reservation_time()
+        time_slots = date_to_time_slot_pair(reservation)
+
+        message = \
+            f"Study carrel [{room}]\n" \
+            f"Date: {reservation.format('YYYY-MM-DD')}\n" \
+            "Time: \n" \
+            f"[{cancel_symbol[return_status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
+        print(message)
+        await channel.send(message)
 
     await channel.send("------------------------------------------------------------")
 
