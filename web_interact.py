@@ -38,14 +38,14 @@ def get_driver() -> webdriver.Chrome:
     return driver
 
 def driver_login(driver: webdriver.Chrome):
-    load_dotenv()
-
     account = os.getenv("ACCOUNT")
     password = os.getenv("PASSWORD")
 
     login(driver, account, password)
 
 def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> list:
+    load_dotenv()
+
     driver = get_driver()
     driver_login(driver)
 
