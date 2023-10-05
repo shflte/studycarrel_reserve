@@ -11,7 +11,7 @@ from page_objects import (
     DATE_PAGE
 )
 
-def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple) -> int:
+def reserve(driver: webdriver.Chrome, room: str, time_slot: tuple) -> int:
     wait = WebDriverWait(driver, 10)
     status = 0
 
@@ -28,10 +28,10 @@ def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple) -> int:
 
     # check if both checkboxes are present
     try:
-        time_slots_checkbox_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[0]))
-        time_slots_checkbox_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[1]))
-        time_slot_box_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slots[0]))
-        time_slot_box_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slots[1]))
+        time_slots_checkbox_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slot[0]))
+        time_slots_checkbox_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slot[1]))
+        time_slot_box_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot[0]))
+        time_slot_box_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot[1]))
     except:
         time_slots_checkbox_1 = None
         time_slots_checkbox_2 = None

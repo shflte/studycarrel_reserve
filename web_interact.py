@@ -52,21 +52,18 @@ def driver_login(driver: webdriver.Chrome):
     if logged_in == -1:
         raise Exception("Login failed")
 
-def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> list:
+def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slot: tuple) -> list:
     load_dotenv()
 
     driver = get_driver()
     driver_login(driver)
 
-    return_status = []
-    for time_slot in time_slots:
-        navigation(driver)
-        select_date(driver, date)
-        status = reserve(driver, room, time_slot)
-        return_status.append(status)
+    navigation(driver)
+    select_date(driver, date)
+    status = reserve(driver, room, time_slot)
 
     driver.quit()
-    return return_status
+    return status
 
 def cancel_reservation() -> int:
     driver = get_driver()

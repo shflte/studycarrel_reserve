@@ -74,15 +74,15 @@ delete reservation:
 # Define a dictionary of reserve status
 reserve_symbol = {
     0: "+",
-    -1: "x",
-    -2: "x",
+    -1: "*",
+    -2: "∅",
     -3: "!"
 }
 
 cancel_symbol = {
     0: "-",
-    1: "x",
-    2: "x",
+    1: "∅",
+    2: "~",
     -1: "!"
 }
 
@@ -119,38 +119,33 @@ async def on_ready():
             (19, 26)
         ]
         date = arrow.now().shift(days=10)
-        try:
-            return_status = reserve_carrel(room, date, time_slots)
-        except:
-            return_status = -3
 
-        message = \
-            f"Study carrel [{room}]\n" \
-            f"Date: {date.format('YYYY-MM-DD')}\n" \
-            "Time: \n"
         for i in range(len(time_slots)):
-            message += f"[{reserve_symbol[return_status[i]]}] {time_slot_table[time_slots[i][0]]} - {time_slot_table[time_slots[i][1]]}\n"
+            try:
+                status = reserve_carrel(room, date, time_slots[i])
+            except:
+                status = -3
+            message = \
+                f"------討論室 [{room}] 預約狀態------\n" \
+                f"Date: {date.format('YYYY-MM-DD')}\n" \
+                f"Time: [{reserve_symbol[status]}] {time_slot_table[time_slots[i][0]]} - {time_slot_table[time_slots[i][1]]}\n"
             print(message)
-
-        await channel.send(message)
+            await channel.send(message)
 
     elif args.cancel:
         try:
-            return_status = cancel_reservation()
+            status = cancel_reservation()
         except:
-            return_status = -1
+            status = -1
         reservation = get_reservation_time()
         time_slots = date_to_time_slot_pair(reservation)
 
         message = \
-            f"Study carrel [{room}]\n" \
+            f"------討論室 [{room}] 取消狀態------\n" \
             f"Date: {reservation.format('YYYY-MM-DD')}\n" \
-            "Time: \n" \
-            f"[{cancel_symbol[return_status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
+            f"Time: [{cancel_symbol[status]}] {time_slot_table[time_slots[0]]} ~ {time_slot_table[time_slots[1]]}\n"
         print(message)
         await channel.send(message)
-
-    await channel.send("------------------------------------------------------------")
 
 # Run the bot
 client.run(DISCORD_TOKEN)
