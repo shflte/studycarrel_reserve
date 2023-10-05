@@ -32,7 +32,6 @@ def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple) -> int:
     choose_room.click()
 
     # check if both checkboxes are present
-    breakpoint()
     try:
         time_slots_checkbox_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[0]))
         time_slots_checkbox_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[1]))
@@ -44,15 +43,11 @@ def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple) -> int:
         time_slot_box_1 = None
         time_slot_box_2 = None
         status = -2
-    
-    breakpoint()
 
     # check if attribute class is "disabled"
     if time_slot_box_1 and time_slot_box_2:
         if time_slot_box_1.get_attribute("class") == "disabled" or time_slot_box_2.get_attribute("class") == "disabled":
             status = -1
-
-    breakpoint()
 
     # click if not disabled and present by checking status
     if status == 0:

@@ -12,54 +12,51 @@ from navigation import navigation
 from date import select_date
 from reserve import reserve
 
-load_dotenv()
+def reserve_carrel(room: str, time_slots: tuple) -> list:
+    load_dotenv()
 
-chrome_driver_path = os.getenv("CHROME_DRIVER_PATH")
-account = os.getenv("ACCOUNT")
-password = os.getenv("PASSWORD")
+    account = os.getenv("ACCOUNT")
+    password = os.getenv("PASSWORD")
 
-if not chrome_driver_path:
-    raise Exception("CHROME_DRIVER_PATH not set")
+    chrome_options = Options()
 
-chrome_options = Options()
-chrome_options.binary_location = chrome_driver_path
+    if os.getenv("HEADLESS") == "True":
+        chrome_options.add_argument("--headless")
 
-if os.getenv("HEADLESS") == "True":
-    chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.maximize_window()
 
-driver = webdriver.Chrome(options=chrome_options)
-driver.maximize_window()
+    login(driver, account, password)
 
-login(driver, account, password)
+    return_status = []
+    for time_slot in time_slots:
+        navigation(driver)
+        select_date(driver)
+        status = reserve(driver, room, time_slot)
+        return_status.append(status)
 
-room = "201"
-time_slots = [
-    (3, 10),
-    (11, 18),
-    (19, 26)
-]
-return_status = []
-for time_slot in time_slots:
-    navigation(driver)
-    select_date(driver)
-    status = reserve(driver, room, time_slot)
-    return_status.append(status)
-    breakpoint()
+    print(return_status)
 
-print(return_status)
+    '''
+    status of reserving:
+        success: 0
+        reserved: -1
+        not available: -2
 
-'''
-status of reserving:
-    success: 0
-    reserved: -1
-    not available: -2
+    delete reservation:
+        success: 0
+        error: -1
+    '''
+    # delete reservation
 
-delete reservation:
-    success: 0
-    error: -1
-'''
-# delete reservation
+    driver.quit()
+    return return_status
 
-breakpoint()
-
-driver.quit()
+if __name__ == "__main__":
+    room = "201"
+    time_slots = [
+        (3, 10),
+        (11, 18),
+        (19, 26)
+    ]
+    reserve_carrel(room, time_slots)
