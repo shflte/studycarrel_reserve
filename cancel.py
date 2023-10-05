@@ -16,39 +16,38 @@ def cancel(driver: webdriver.Chrome) -> int:
     reserve_url = os.getenv("RESERVE_URL")
     driver.get(reserve_url)
 
+    iframe_element = driver.find_element(By.XPATH, RESERVED_LIST_PAGE.iframe)
+    driver.switch_to.frame(iframe_element)
     wait = WebDriverWait(driver, 10)
-    status = 0
+    wait.until(EC.presence_of_element_located((By.XPATH, RESERVED_LIST_PAGE.reservation_list)))
 
-    breakpoint()
-
-    try:
-        nearest_reservation_time_element = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVED_LIST_PAGE.get_nearest_reservation_time_xpath())))
-        nearest_reservation_time_text = nearest_reservation_time_element.text.split().split("~")[0]
-        nearest_reservation_time = arrow.get(nearest_reservation_time_text, "HH:mm:ss")
-        current_time = arrow.now()
-        time_diff = nearest_reservation_time - current_time
-    except:
-        nearest_reservation_time_element = None
+    reservations = driver.find_elements(By.XPATH, RESERVED_LIST_PAGE.reservation_list)
+    if len(reservations) == 1:
         return 1
-
-    if time_diff.seconds <= 600:
-        nearest_reservation_cancel_checkbox = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVED_LIST_PAGE.get_nearest_reservation_cancel_checkbox_xpath())))
-        nearest_reservation_cancel_checkbox.click()
-        cancel_button = wait.until(EC.element_to_be_clickable((By.XPATH, RESERVED_LIST_PAGE.del_button)))
-        cancel_button.click()
-        try:
-            driver.switch_to.alert.accept()
-        except:
-            status = -1
-
-        driver.switch_to.window(driver.window_handles[0])
-        driver.get(reserve_url)
-
-        try:
-            driver.find_element(By.XPATH, RESERVED_LIST_PAGE.get_nearest_reservation_time_xpath())
-        except:
-            status = 0
-    else:
-        status = 1
     
-    return status
+    reservations = reservations[1:]
+    for i in range(len(reservations)):
+        reservation = reservations[i]
+        reservation_time_element = reservation.find_element(By.XPATH, RESERVED_LIST_PAGE.get_reservation_time_xpath(i + 2))
+        reservation_time_text = reservation_time_element.text.split("~")[0]
+        reservation_time = arrow.get(reservation_time_text, "YYYYMMDD HH:mm:ss").replace(tzinfo="Asia/Taipei").shift(minutes=30)
+        time_diff = reservation_time - arrow.now()
+
+        if time_diff.seconds <= 2000:
+            reservation_cancel_checkbox = reservation.find_element(By.XPATH, RESERVED_LIST_PAGE.get_reservation_cancel_checkbox_xpath(i + 2)
+                                                                   )
+            reservation_cancel_checkbox.click()
+            cancel_button = reservation.find_element(By.XPATH, RESERVED_LIST_PAGE.del_button)
+            cancel_button.click()
+            breakpoint()
+            try:
+                driver.switch_to.alert.accept()
+            except:
+                return -1
+
+            driver.switch_to.window(driver.window_handles[0])
+            driver.get(reserve_url)
+
+            return 0
+
+    return 2
