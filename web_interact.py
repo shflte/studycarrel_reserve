@@ -12,13 +12,22 @@ from login import login
 from navigation import navigation
 from date import select_date
 from reserve import reserve
+from cancel import cancel
 
-def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> list:
-    load_dotenv()
+'''
+status of reserving:
+    success: 0
+    reserved: -1
+    not available: -2
 
-    account = os.getenv("ACCOUNT")
-    password = os.getenv("PASSWORD")
+delete reservation:
+    success: 0
+    no reservation: 1
+    no expiring reservation: 2
+    unexpected error: -1
+'''
 
+def get_driver() -> webdriver.Chrome:
     chrome_options = Options()
 
     if os.getenv("HEADLESS") == "True":
@@ -26,8 +35,19 @@ def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> lis
 
     driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
+    return driver
+
+def driver_login(driver: webdriver.Chrome):
+    load_dotenv()
+
+    account = os.getenv("ACCOUNT")
+    password = os.getenv("PASSWORD")
 
     login(driver, account, password)
+
+def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> list:
+    driver = get_driver()
+    driver_login(driver)
 
     return_status = []
     for time_slot in time_slots:
@@ -36,29 +56,18 @@ def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slots: tuple) -> lis
         status = reserve(driver, room, time_slot)
         return_status.append(status)
 
-    print(return_status)
-
-    '''
-    status of reserving:
-        success: 0
-        reserved: -1
-        not available: -2
-
-    delete reservation:
-        success: 0
-        error: -1
-    '''
-    # delete reservation
-    # captcha retry
-
     driver.quit()
     return return_status
 
+def cancel_reservation() -> int:
+    driver = get_driver()
+    driver_login(driver)
+
+    status = cancel(driver)
+
+    driver.quit()
+    return status
+
 if __name__ == "__main__":
-    room = "201"
-    time_slots = [
-        (3, 10),
-        (11, 18),
-        (19, 26)
-    ]
-    reserve_carrel(room, time_slots)
+    status = cancel_reservation()
+    print(status)

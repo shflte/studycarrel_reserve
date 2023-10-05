@@ -50,8 +50,19 @@ client = discord.Client(intents=intents)
 # arg parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--reserve", action="store_true", help="reserve a carrel")
-parser.add_argument("-d", "--delete", action="store_true", help="delete a reservation")
+parser.add_argument("-c", "--cancel", action="store_true", help="cancel a reservation")
 args = parser.parse_args()
+
+'''
+status of reserving:
+    success: 0
+    reserved: -1
+    not available: -2
+
+delete reservation:
+    success: 0
+    error: -1
+'''
 
 # Define a dictionary of reserve status
 reserve_message = {
@@ -89,6 +100,8 @@ async def on_ready():
             await channel.send(message)
     elif args.delete:
         pass
+
+    await channel.send("------------------------------------------------------------")
 
 # Run the bot
 client.run(DISCORD_TOKEN)

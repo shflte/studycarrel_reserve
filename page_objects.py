@@ -12,6 +12,16 @@ class RESERVED_LIST_PAGE:
     add_button = "//input[@name='addbtn']"
     del_button = "//input[@name='delbtn']"
 
+    reservation_list = "//tbody//tr"
+    reservation_time = "/td[5]"
+    reservation_cancel_checkbox = "//input"
+
+    def get_reservation_time_xpath(index: int):
+        return RESERVED_LIST_PAGE.reservation_list + f"[{index}]" + RESERVED_LIST_PAGE.reservation_time
+    
+    def get_reservation_cancel_checkbox_xpath(index: int):
+        return RESERVED_LIST_PAGE.reservation_list + f"[{index}]" + RESERVED_LIST_PAGE.reservation_cancel_checkbox
+
 class RESERVE_RELATED_PAGE:
     # notice
     carrel_room_select = "//input[@name='space']"
