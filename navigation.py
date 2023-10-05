@@ -19,7 +19,6 @@ def navigation(driver: webdriver.Chrome):
     reader_id_1 = os.getenv("READER_ID_1")
     reader_id_2 = os.getenv("READER_ID_2")
 
-
     wait = WebDriverWait(driver, 10)
     driver.get(reserve_url)
 
@@ -38,6 +37,7 @@ def navigation(driver: webdriver.Chrome):
     next_button.click()
 
     # enter reader id page
+    wait.until(EC.element_to_be_clickable((By.XPATH, RESERVE_RELATED_PAGE.submit_reader_id_button)))
     reader_id_input_1 = driver.find_elements(By.XPATH, RESERVE_RELATED_PAGE.reader_id_input)[0]
     reader_id_input_2 = driver.find_elements(By.XPATH, RESERVE_RELATED_PAGE.reader_id_input)[1]
     submit_reader_id_button = driver.find_element(By.XPATH, RESERVE_RELATED_PAGE.submit_reader_id_button)

@@ -5,9 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from dotenv import load_dotenv
-import subprocess
 import os
-import time
 
 from login import login
 from navigation import navigation
@@ -40,11 +38,15 @@ time_slots = [
     (11, 18),
     (19, 26)
 ]
+return_status = []
 for time_slot in time_slots:
     navigation(driver)
     select_date(driver)
-    reserve(driver, room, time_slot)
+    status = reserve(driver, room, time_slot)
+    return_status.append(status)
     breakpoint()
+
+print(return_status)
 
 '''
 status of reserving:

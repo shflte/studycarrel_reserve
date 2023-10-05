@@ -16,8 +16,9 @@ time slot table
 
 '''
 
-def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple):
+def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple) -> int:
     wait = WebDriverWait(driver, 10)
+    status = 0
 
     # request for all available rooms
     request_all_button = wait.until(EC.element_to_be_clickable((By.XPATH, DATE_PAGE.request_all_button)))
@@ -30,18 +31,46 @@ def reserve(driver: webdriver.Chrome, room: str, time_slots: tuple):
     choose_room = wait.until(EC.element_to_be_clickable((By.XPATH, TIME_SLOT_PAGE.get_choose_room_xpath(room))))
     choose_room.click()
 
-    # choose time slots
-    time_slots_checkbox = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[0]))
-    time_slots_checkbox.click()
-    time_slots_checkbox = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[1]))
-    time_slots_checkbox.click()
+    # check if both checkboxes are present
+    breakpoint()
+    try:
+        time_slots_checkbox_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[0]))
+        time_slots_checkbox_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slots[1]))
+        time_slot_box_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slots[0]))
+        time_slot_box_2 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slots[1]))
+    except:
+        time_slots_checkbox_1 = None
+        time_slots_checkbox_2 = None
+        time_slot_box_1 = None
+        time_slot_box_2 = None
+        status = -2
+    
+    breakpoint()
 
-    # submit
-    submit_button = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_submit_button_xpath(room))
-    submit_button.click()
+    # check if attribute class is "disabled"
+    if time_slot_box_1 and time_slot_box_2:
+        if time_slot_box_1.get_attribute("class") == "disabled" or time_slot_box_2.get_attribute("class") == "disabled":
+            status = -1
 
-    # alert check
-    driver.switch_to.alert.accept()
+    breakpoint()
 
-    # switch back to main window
+    # click if not disabled and present by checking status
+    if status == 0:
+        time_slots_checkbox_1.click()
+        time_slots_checkbox_2.click()
+
+        # submit
+        submit_button = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_submit_button_xpath(room))
+        submit_button.click()
+
+        # alert check
+        try:
+            driver.switch_to.alert.accept()
+        except:
+            pass
+    else:
+        driver.close()
+    
     driver.switch_to.window(driver.window_handles[0])
+
+    return status

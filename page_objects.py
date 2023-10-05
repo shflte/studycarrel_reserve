@@ -61,5 +61,8 @@ class TIME_SLOT_PAGE:
     def get_time_slots_checkbox_xpath(room_id: str, time_slot_id: int):
         return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.time_slot.format(time_slot_id) + TIME_SLOT_PAGE.time_slot_checkbox
     
+    def get_time_slots_block_xpath(room_id: str, time_slot_id: int):
+        return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.time_slot.format(time_slot_id)
+
     def get_submit_button_xpath(room_id: str):
         return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.submit_button
