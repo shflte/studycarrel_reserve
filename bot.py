@@ -59,23 +59,6 @@ cancel_symbol = {
     -1: "完蛋 有鬼"
 }
 
-def get_reservation_time() -> arrow.Arrow:
-    reservation = arrow.now()
-    if reservation.minute < 30:
-        reservation = reservation.replace(minute=0)
-    else:
-        reservation = reservation.replace(minute=30)
-    return reservation
-
-def date_to_time_slot_pair(date: arrow.Arrow) -> tuple:
-    time_slot = (date.hour - 8) * 2
-    if date.minute >= 30:
-        time_slot += 1
-    
-    if time_slot + 7 > 27:
-        return (time_slot, -1)
-    return (time_slot, time_slot + 7)
-
 def reservation_str() -> str:
     message = "```\n"
     try:
@@ -132,9 +115,6 @@ async def on_ready():
 
         if retry_count == 0:
             status = -1
-
-        reservation = get_reservation_time()
-        time_slots = date_to_time_slot_pair(reservation)
 
         message = "取消結果：\n"
         message += f"{cancel_symbol[status]}\n"
