@@ -33,9 +33,8 @@ def cancel(driver: webdriver.Chrome) -> int:
         reservation_time = arrow.get(reservation_time_text, "YYYYMMDD HH:mm:ss").replace(tzinfo="Asia/Taipei").shift(minutes=30)
         time_diff = reservation_time - arrow.now()
 
-        if time_diff.seconds <= 1800:
-            reservation_cancel_checkbox = reservation.find_element(By.XPATH, RESERVED_LIST_PAGE.get_reservation_cancel_checkbox_xpath(i + 2)
-                                                                   )
+        if time_diff.days == 0 and time_diff.seconds <= 1800:
+            reservation_cancel_checkbox = reservation.find_element(By.XPATH, RESERVED_LIST_PAGE.get_reservation_cancel_checkbox_xpath(i + 2))
             reservation_cancel_checkbox.click()
             cancel_button = reservation.find_element(By.XPATH, RESERVED_LIST_PAGE.del_button)
             cancel_button.click()
