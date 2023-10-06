@@ -59,23 +59,6 @@ cancel_symbol = {
     -1: "完蛋 有鬼"
 }
 
-def get_reservation_time() -> arrow.Arrow:
-    reservation = arrow.now()
-    if reservation.minute < 30:
-        reservation = reservation.replace(minute=0)
-    else:
-        reservation = reservation.replace(minute=30)
-    return reservation
-
-def date_to_time_slot_pair(date: arrow.Arrow) -> tuple:
-    time_slot = (date.hour - 8) * 2
-    if date.minute >= 30:
-        time_slot += 1
-    
-    if time_slot + 7 > 27:
-        return (time_slot, -1)
-    return (time_slot, time_slot + 7)
-
 def reservation_str() -> str:
     message = "```\n"
     try:
@@ -114,6 +97,7 @@ async def on_ready():
             message += reservation_str()
             print(message)
             await channel.send(message)
+        await client.close()
 
     elif args.cancel:
         retry_count = 5
@@ -132,9 +116,6 @@ async def on_ready():
         if retry_count == 0:
             status = -1
 
-        reservation = get_reservation_time()
-        time_slots = date_to_time_slot_pair(reservation)
-
         message = "取消結果：\n"
         message += f"{cancel_symbol[status]}\n"
         message += reservation_str()
@@ -143,6 +124,7 @@ async def on_ready():
 
         print(message)
         await channel.send(message)
+        await client.close()
 
     elif args.table:
         message = "預約列表：\n"
@@ -152,7 +134,21 @@ async def on_ready():
         await channel.send(message)
     
     # terminate the bot
-    await client.close()
+
+# when a message is sent
+@client.event
+async def on_message(message):
+    channel = message.channel
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('!'):
+        if message.content == '!table':
+            table_str = "預約列表：\n"
+            table_str += reservation_str()
+
+            print(table_str)
+            await channel.send(table_str)
 
 # Run the bot
 client.run(DISCORD_TOKEN)
