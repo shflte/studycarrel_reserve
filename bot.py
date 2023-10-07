@@ -82,14 +82,6 @@ def check_reservation(reserve_time: float, day_offset: int, room: str):
     if not room in ["201", "202", "203"]:
         raise Exception("Invalid room")
 
-def get_time_slot(reserve_time: float) -> tuple:
-    begin_time_slot = int((reserve_time - 8) * 2)
-    return [
-        (begin_time_slot, begin_time_slot + 7),
-        (begin_time_slot + 8, begin_time_slot + 15),
-        (begin_time_slot + 16, begin_time_slot + 23)
-    ]
-
 def reservation_str() -> str:
     message = ""
     try:
@@ -145,7 +137,7 @@ async def on_message(message):
             
             date = arrow.now().shift(days=day_offset)
 
-            for time_slot in get_time_slot(reserve_time):
+            for time_slot in [reserve_time, reserve_time + 8, reserve_time + 16]:
                 try:
                     status = reserve_carrel(room, date, time_slot)
                 except:
