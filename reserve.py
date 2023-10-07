@@ -13,7 +13,10 @@ from page_objects import (
 )
 
 def time_slot_to_str(time_slot: float) -> str:
-    time = arrow.now().replace(hour=int(time_slot), minute=int((time_slot - int(time_slot)) * 60))
+    try:
+        time = arrow.now().replace(hour=int(time_slot), minute=int((time_slot - int(time_slot)) * 60))
+    except:
+        time = arrow.now().replace(hour=23, minute=30)
     return time.format("HH:mm")
 
 def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
@@ -33,7 +36,8 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
 
     time_slot_str = time_slot_to_str(time_slot)
 
-
+    time_slots_checkbox_1 = None
+    time_slot_box_1 = None
     try:
         time_slots_checkbox_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slot_str))
         time_slot_box_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot_str))
@@ -43,6 +47,8 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     if time_slot_box_1:
         if time_slot_box_1.get_attribute("class") == "disabled":
             return -1
+    else:
+        return -2
 
     # find end of reservation
     time_slots_checkbox_2 = None
@@ -79,6 +85,5 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     driver.close()
     
     driver.switch_to.window(driver.window_handles[0])
-    breakpoint()
 
     return status
