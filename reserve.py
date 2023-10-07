@@ -53,8 +53,7 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     # find end of reservation
     time_slots_checkbox_2 = None
     offset = 0.5
-    while True:
-
+    while offset < 3.5:
         try:
             time_slot_str = time_slot_to_str(time_slot + offset)
             tmp_box = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot_str))
@@ -78,12 +77,15 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     # alert check
     try:
         if "已超過預約總時數" in driver.switch_to.alert.text or "在其它地方已預約相同時段" in driver.switch_to.alert.text:
+            driver.switch_to.alert.accept()
             status = -3
-        driver.switch_to.alert.accept()
     except:
         pass
-    driver.close()
-    
-    driver.switch_to.window(driver.window_handles[0])
+
+    try:
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+    except:
+        pass
 
     return status
