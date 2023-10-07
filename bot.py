@@ -71,6 +71,8 @@ def help_message() -> str:
 
     return help_message
 
+room_list = ["201", "202", "203", "501", "C601", "C602", "C603", "C604", "D601"]
+
 def check_reservation(reserve_time: float, day_offset: int, room: str):
     # check all conditions
     if not reserve_time % 0.5 == 0:
@@ -79,7 +81,7 @@ def check_reservation(reserve_time: float, day_offset: int, room: str):
         raise Exception("Invalid time slot")
     if not day_offset >= 0:
         raise Exception("Invalid day offset")
-    if not room in ["201", "202", "203"]:
+    if not room in room_list:
         raise Exception("Invalid room")
 
 def reservation_str() -> str:
