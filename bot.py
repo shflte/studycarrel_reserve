@@ -101,6 +101,8 @@ def reservation_str() -> str:
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     print(args)
+    await client.change_presence(activity=discord.Game(name="!help"))
+    await client.get_channel(int(SH_TEXT_CHANNEL_ID)).send("我活了")
 
 # when a message is sent
 @client.event
@@ -139,19 +141,21 @@ async def on_message(message):
             
             date = arrow.now().shift(days=day_offset)
 
+            status_list = []
             for time_slot in [reserve_time, reserve_time + 8, reserve_time + 16]:
                 try:
-                    status = reserve_carrel(room, date, time_slot)
+                    status_list.append(reserve_carrel(room, date, time_slot))
                 except:
-                    status = -4
-                message = "預約結果：\n"
+                    status_list.append(-4)
+            message = "預約結果：\n"
+            for status in status_list:
                 message += f"{reserve_symbol[status]}\n"
-                message += reservation_str()
-                print(message)
-                await channel.send(message)
+            message += reservation_str()
+            print(message)
+            await channel.send(message)
 
         elif message.content == '!cancel':
-            retry_count = 5
+            retry_count = 2
             error_message = ""
 
             while retry_count > 0:
