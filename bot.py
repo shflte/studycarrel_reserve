@@ -137,13 +137,15 @@ async def on_ready():
     print(args)
     scheduler.start()
     scheduler.print_jobs()
-    await client.change_presence(activity=discord.Game(name="!help"))
+    await client.change_presence(activity=discord.Game(name="一種很厲害的遊戲"))
     await client.get_channel(int(SH_TEXT_CHANNEL_ID)).send("我活了")
 
 # when a message is sent
 @client.event
 async def on_message(message):
     channel = message.channel
+    if channel.id != int(SH_TEXT_CHANNEL_ID):
+        return
     guild = message.guild
 
     if message.author == client.user:
