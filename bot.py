@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import discord
 import argparse
 import arrow
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from web_interact import (
     reserve_carrel,
@@ -65,7 +65,6 @@ def help_message() -> str:
     help_message += "```\n"
     help_message += "!table\n"
     help_message += "!reserve time_slot [day_offset] [room]\n"
-    help_message += "!cancel\n"
     help_message += "!help\n"
     help_message += "```"
 
@@ -96,11 +95,42 @@ def reservation_str() -> str:
         message = "完蛋 有鬼 table壞了"
     return message
 
+scheduler = AsyncIOScheduler()
+@scheduler.scheduled_job('cron', minute='27, 57', hour='7-23')
+async def regularly_cancel_reservation():
+    cancel_result = cancel_reservation()
+    channel = client.get_channel(int(SH_TEXT_CHANNEL_ID))
+
+    retry_count = 2
+    error_message = ""
+
+    while retry_count > 0:
+        try:
+            status = cancel_result
+            break
+        except Exception as e:
+            error_message += f"Error: {e}\n"
+            print(error_message)
+        retry_count -= 1
+    if retry_count == 0:
+        status = -1
+
+    message = "取消結果：\n"
+    message += f"{cancel_symbol[status]}\n"
+    message += reservation_str()
+    if retry_count == 0:
+        message += error_message
+
+    print(message)
+    await channel.send(message)
+
 # Define an event handler for when the bot is ready
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     print(args)
+    scheduler.start()
+    scheduler.print_jobs()
     await client.change_presence(activity=discord.Game(name="!help"))
     await client.get_channel(int(SH_TEXT_CHANNEL_ID)).send("我活了")
 
@@ -154,32 +184,6 @@ async def on_message(message):
             print(message)
             await channel.send(message)
 
-        elif message.content == '!cancel':
-            retry_count = 2
-            error_message = ""
-
-            while retry_count > 0:
-                try:
-                    status = cancel_reservation()
-                    break
-                except Exception as e:
-                    error_message += f"Error: {e}\n"
-                    print(error_message)
-
-                retry_count -= 1
-
-            if retry_count == 0:
-                status = -1
-
-            message = "取消結果：\n"
-            message += f"{cancel_symbol[status]}\n"
-            message += reservation_str()
-            if retry_count == 0:
-                message += error_message
-
-            print(message)
-            await channel.send(message)
-
         elif message.content == '!help':
             await channel.send(help_message())
 
@@ -187,5 +191,4 @@ async def on_message(message):
             await channel.send("Σヽ(ﾟД ﾟ; )ﾉ")
             await channel.send(help_message())
 
-# Run the bot
 client.run(DISCORD_TOKEN)
