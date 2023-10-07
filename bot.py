@@ -60,6 +60,36 @@ cancel_symbol = {
     -1: "完蛋 有鬼"
 }
 
+def help_message() -> str:
+    help_message = "指令列表：\n"
+    help_message += "```\n"
+    help_message += "!table\n"
+    help_message += "!reserve time_slot [day_offset] [room]\n"
+    help_message += "!cancel\n"
+    help_message += "!help\n"
+    help_message += "```"
+
+    return help_message
+
+def check_reservation(reserve_time: float, day_offset: int, room: str):
+    # check all conditions
+    if not reserve_time % 0.5 == 0:
+        raise Exception("Invalid time slot")
+    if not 0 <= reserve_time <= 23.5:
+        raise Exception("Invalid time slot")
+    if not day_offset >= 0:
+        raise Exception("Invalid day offset")
+    if not room in ["201", "202", "203"]:
+        raise Exception("Invalid room")
+
+def get_time_slot(reserve_time: float) -> tuple:
+    begin_time_slot = int((reserve_time - 8) * 2)
+    return [
+        (begin_time_slot, begin_time_slot + 7),
+        (begin_time_slot + 8, begin_time_slot + 15),
+        (begin_time_slot + 16, begin_time_slot + 23)
+    ]
+
 def reservation_str() -> str:
     message = ""
     try:
@@ -96,20 +126,28 @@ async def on_message(message):
             await channel.send(table_str)
 
         elif message.content.startswith('!reserve'):
-            # second argument is day offset
-            # third argument is time slot
-            # fourth argument is room number
             room = "201"
-            time_slots = [
-                (3, 10),
-                (11, 18),
-                (19, 26)
-            ]
-            date = arrow.now().shift(days=10)
+            day_offset = 0
+            try:
+                if len(message.content.split()) == 4:
+                    reserve_time = float(message.content.split()[1])
+                    day_offset = int(message.content.split()[2])
+                    room = message.content.split()[3]
+                elif len(message.content.split()) == 2:
+                    reserve_time = float(message.content.split()[1])
+                else:
+                    raise Exception("Invalid command")
+                check_reservation(reserve_time, day_offset, room)
+            except:
+                await channel.send("Σ(ﾟДﾟ；≡；ﾟдﾟ)")
+                await channel.send(help_message())
+                return
+            
+            date = arrow.now().shift(days=day_offset)
 
-            for i in range(len(time_slots)):
+            for time_slot in get_time_slot(reserve_time):
                 try:
-                    status = reserve_carrel(room, date, time_slots[i])
+                    status = reserve_carrel(room, date, time_slot)
                 except:
                     status = -4
                 message = "預約結果：\n"
@@ -145,18 +183,11 @@ async def on_message(message):
             await channel.send(message)
 
         elif message.content == '!help':
-            help_message = "指令列表：\n"
-            help_message += "```\n"
-            help_message += "!table:   查看預約列表\n"
-            help_message += "!reserve: 預約座位\n"
-            help_message += "!cancel:  取消預約\n"
-            help_message += "!help:    查看指令列表\n"
-            help_message += "```"
-            print(help_message)
-            await channel.send(help_message)
+            await channel.send(help_message())
 
         else:
-            await channel.send(">_<")
+            await channel.send("Σヽ(ﾟД ﾟ; )ﾉ")
+            await channel.send(help_message())
 
 # Run the bot
 client.run(DISCORD_TOKEN)
