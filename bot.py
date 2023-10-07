@@ -142,7 +142,7 @@ async def on_message(message):
             date = arrow.now().shift(days=day_offset)
 
             status_list = []
-            for time_slot in [reserve_time, reserve_time + 8, reserve_time + 16]:
+            for time_slot in [reserve_time, reserve_time + 4, reserve_time + 8]:
                 try:
                     status_list.append(reserve_carrel(room, date, time_slot))
                 except:
