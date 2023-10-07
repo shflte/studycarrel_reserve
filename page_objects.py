@@ -69,18 +69,18 @@ class DATE_PAGE:
 class TIME_SLOT_PAGE:
     room_panel = "//span[@title='{}']/ancestor::dl"
     choose_room = "//input[@name='deviceid']"
-    time_slot = "//dd[{}]"
+    time_slot_block = "//span[.='{}']/ancestor::dd"
     time_slot_checkbox = "//input"
     submit_button = "//input[@name='sendbtn']"
 
     def get_choose_room_xpath(room_id: str):
         return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.choose_room
 
-    def get_time_slots_checkbox_xpath(room_id: str, time_slot_id: int):
-        return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.time_slot.format(time_slot_id) + TIME_SLOT_PAGE.time_slot_checkbox
-    
-    def get_time_slots_block_xpath(room_id: str, time_slot_id: int):
-        return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.time_slot.format(time_slot_id)
+    def get_time_slots_block_xpath(room_id: str, time_slot: str):
+        return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.time_slot_block.format(time_slot)
+
+    def get_time_slots_checkbox_xpath(room_id: str, time_slot: str):
+        return TIME_SLOT_PAGE.get_time_slots_block_xpath(room_id, time_slot) + TIME_SLOT_PAGE.time_slot_checkbox
 
     def get_submit_button_xpath(room_id: str):
         return TIME_SLOT_PAGE.room_panel.format(room_id) + TIME_SLOT_PAGE.submit_button
