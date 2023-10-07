@@ -54,7 +54,7 @@ def driver_login(driver: webdriver.Chrome):
     if logged_in == -1:
         raise Exception("Login failed")
 
-def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slot: tuple) -> int:
+def reserve_carrel(room: str, date: arrow.arrow.Arrow, time_slot: float) -> int:
     load_dotenv()
 
     driver = get_driver()
@@ -86,13 +86,13 @@ def get_reservation_table() -> list:
     driver.quit()
     return reservations
 
-# if __name__ == "__main__":
-#     status = cancel_reservation()
-#     print(status)
-
 if __name__ == "__main__":
-    status = reserve_carrel("201", arrow.now().shift(days=10), (3, 10))
+    status = cancel_reservation()
     print(status)
+
+# if __name__ == "__main__":
+#     status = reserve_carrel("201", arrow.now().shift(days=10), (3, 10))
+#     print(status)
 
 # if __name__ == "__main__":
 #     reservations = get_reservation_table()
