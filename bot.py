@@ -61,13 +61,18 @@ cancel_symbol = {
 }
 
 def help_message() -> str:
-    help_message = "指令列表：\n"
-    help_message += "```\n"
-    help_message += "!table\n"
-    help_message += "!reserve time_slot [day_offset] [room]\n"
-    help_message += "!help\n"
-    help_message += "time_slot: 9:00 -> 9, 17:30 -> 17.5\n"
-    help_message += "```"
+    help_message = \
+    '''
+```[COMMAND]:
+    !table
+    !reserve time_slot [day_offset] [room]
+    !help
+
+[NOTE]:
+    time_slot: 9:00 -> 9, 17:30 -> 17.5, ...
+    day_offset: 0 -> today, 1 -> tomorrow, ...
+    room: 201, 202, 203, 501, C601, C602, C603, C604, D601
+```'''
 
     return help_message
 
