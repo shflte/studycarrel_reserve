@@ -14,6 +14,7 @@ from web_script.date import select_date
 from web_script.reserve import reserve
 from web_script.cancel import cancel
 from web_script.reservation_table import reservation_table
+from web_script.availability import availability
 
 '''
 status of reserving:
@@ -86,14 +87,29 @@ def get_reservation_table() -> list:
     driver.quit()
     return reservations
 
+def get_availability(date: arrow.arrow.Arrow) -> dict:
+    driver = get_driver()
+    driver_login(driver)
+
+    navigation(driver)
+    select_date(driver, date)
+    result = availability(driver)
+
+    driver.quit()
+    return result
+
 # if __name__ == "__main__":
 #     status = cancel_reservation()
 #     print(status)
 
-if __name__ == "__main__":
-    status = reserve_carrel("201", arrow.now().shift(days=0), 9.5)
-    print(status)
+# if __name__ == "__main__":
+#     status = reserve_carrel("201", arrow.now().shift(days=0), 9.5)
+#     print(status)
 
 # if __name__ == "__main__":
 #     reservations = get_reservation_table()
 #     print(reservations)
+
+if __name__ == "__main__":
+    result = get_availability()
+    print(result)

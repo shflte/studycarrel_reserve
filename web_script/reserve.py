@@ -38,7 +38,7 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     time_slot_box_1 = None
     try:
         time_slots_checkbox_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_checkbox_xpath(room, time_slot_str))
-        time_slot_box_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot_str))
+        time_slot_box_1 = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath_with_time(room, time_slot_str))
     except:
         return -2
 
@@ -54,7 +54,7 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     while offset < 4:
         try:
             time_slot_str = time_slot_to_str(time_slot + offset)
-            tmp_box = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot_str))
+            tmp_box = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath_with_time(room, time_slot_str))
             if tmp_box.get_attribute("class") == "disabled":
                 break
             else:
