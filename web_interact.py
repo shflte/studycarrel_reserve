@@ -8,12 +8,12 @@ from dotenv import load_dotenv
 import os
 import arrow
 
-from login import login
-from navigation import navigation
-from date import select_date
-from reserve import reserve
-from cancel import cancel
-from reservation_table import reservation_table
+from web_script.login import login
+from web_script.navigation import navigation
+from web_script.date import select_date
+from web_script.reserve import reserve
+from web_script.cancel import cancel
+from web_script.reservation_table import reservation_table
 
 '''
 status of reserving:
@@ -86,13 +86,13 @@ def get_reservation_table() -> list:
     driver.quit()
     return reservations
 
-if __name__ == "__main__":
-    status = cancel_reservation()
-    print(status)
-
 # if __name__ == "__main__":
-#     status = reserve_carrel("201", arrow.now().shift(days=10), (3, 10))
+#     status = cancel_reservation()
 #     print(status)
+
+if __name__ == "__main__":
+    status = reserve_carrel("201", arrow.now().shift(days=0), 9.5)
+    print(status)
 
 # if __name__ == "__main__":
 #     reservations = get_reservation_table()

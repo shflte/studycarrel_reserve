@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import arrow
-from page_objects import DATE_PAGE
+from web_script.page_objects import DATE_PAGE
 
 def same_month(date1: arrow.arrow.Arrow, date2: arrow.arrow.Arrow) -> bool:
     return date1.month == date2.month

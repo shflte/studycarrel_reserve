@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import subprocess
-from page_objects import LOGIN_PAGE
+from web_script.page_objects import LOGIN_PAGE
 
 # from captcha_hack_2captcha import get_captcha_value
 from captcha_hack import get_captcha_value

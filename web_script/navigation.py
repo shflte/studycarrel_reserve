@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from page_objects import (
+from web_script.page_objects import (
     RESERVED_LIST_PAGE,
     RESERVE_RELATED_PAGE
 )
