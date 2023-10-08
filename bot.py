@@ -153,6 +153,7 @@ async def on_message(message):
 
     if message.content.startswith('!'):
         if message.content == '!table':
+            await channel.send("查詢預約列表中...")
             table_str = "預約列表：\n"
             table_str += reservation_str()
 
@@ -177,6 +178,7 @@ async def on_message(message):
                 await channel.send(help_message())
                 return
             
+            await channel.send("預約中...")
             date = arrow.now().shift(days=day_offset)
 
             status_list = []
@@ -185,9 +187,9 @@ async def on_message(message):
                     status_list.append(reserve_carrel(room, date, time_slot))
                 except:
                     status_list.append(-4)
-            message = "預約結果：\n"
-            for status in status_list:
-                message += f"{reserve_symbol[status]}\n"
+            message = f"預約結果：\n"
+            for i, status in enumerate(status_list):
+                message += f"{i}. {reserve_symbol[status]}\n"
             message += reservation_str()
             print(message)
             await channel.send(message)
