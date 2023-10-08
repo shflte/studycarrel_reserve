@@ -8,7 +8,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from web_interact import (
     reserve_carrel,
     cancel_reservation,
-    get_reservation_table
+    get_reservation_table,
+    get_availability
 )
 
 load_dotenv()  # Load environment variables from .env file
@@ -66,6 +67,7 @@ def help_message() -> str:
 ```[COMMAND]:
     !table
     !reserve time_slot [day_offset] [room]
+    !availability [day_offset]
     !help
 
 [NOTE]:
@@ -99,6 +101,14 @@ def reservation_str() -> str:
         message += "```"
     except:
         message = "完蛋 有鬼 table壞了"
+    return message
+
+def availability_str(availability_list: list) -> str:
+    message = "```"
+    for time_slot_time, availability in availability_list:
+        availability_symbol = "O" if availability else "-"
+        message += f"{time_slot_time.format('HH:mm')}: {availability_symbol}\n"
+    message += "```"
     return message
 
 scheduler = AsyncIOScheduler()
@@ -193,6 +203,35 @@ async def on_message(message):
             message += reservation_str()
             print(message)
             await channel.send(message)
+
+        elif message.content.startswith('!availability'):
+            await channel.send("查詢中...")
+            day_offset = 0
+            if len(message.content.split()) > 2:
+                await channel.send("( ´Д`)y━･~~")
+                await channel.send(help_message())
+                return
+            try:
+                if len(message.content.split()) == 2:
+                    day_offset = int(message.content.split()[1])
+                    if not day_offset >= 0:
+                        raise Exception("Invalid day offset")
+            except:
+                await channel.send("Σ(ﾟДﾟ；≡；ﾟдﾟ)")
+                await channel.send(help_message())
+                return
+            
+            try:
+                date = arrow.now().shift(days=day_offset)
+                result = get_availability(date)
+                message = f"查詢結果：\n"
+                for room_id in room_list:
+                    message = f"{room_id}\n"
+                    message += availability_str(result[room_id])
+                    print(message)
+                    await channel.send(message)
+            except:
+                await channel.send("完蛋 有鬼 出包")
 
         elif message.content == '!help':
             await channel.send(help_message())
