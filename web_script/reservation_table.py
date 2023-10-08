@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from dotenv import load_dotenv
 import os
-import arrow
 from web_script.page_objects import (
     RESERVED_LIST_PAGE
 )

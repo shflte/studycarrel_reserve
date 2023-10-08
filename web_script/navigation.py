@@ -10,7 +10,6 @@ from web_script.page_objects import (
 )
 
 from dotenv import load_dotenv
-import time
 import os
 
 def navigation(driver: webdriver.Chrome):
