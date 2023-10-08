@@ -103,13 +103,21 @@ def reservation_str() -> str:
         message = "完蛋 有鬼 table壞了"
     return message
 
-def availability_str(availability_list: list) -> str:
-    message = "```"
-    for time_slot_time, availability in availability_list:
-        availability_symbol = "O" if availability else "-"
-        message += f"{time_slot_time.format('HH:mm')}: {availability_symbol}\n"
-    message += "```"
-    return message
+def availability_table_str(availability: dict) -> str:
+    header = "|     |" + "|".join([f"{room_id:^5}" for room_id in availability.keys()]) + "|\n"
+    body = ""
+    for i in range(availability[room_list[0]].__len__()):
+        time_slot_time = availability[room_list[0]][i][0]
+        if "```" + len(header) + len(body) + "```" > 1950:
+            body += "..."
+            return "```" + header + body + "```"
+
+        body += f"|{time_slot_time.format('HH:mm')}|"
+        for room_id in availability.keys():
+            availability_symbol = "O" if availability[room_id][i][1] else "-"
+            body += f"{availability_symbol:^5}|"
+        body += "\n"
+    return "```" + header + body + "```"
 
 scheduler = AsyncIOScheduler()
 @scheduler.scheduled_job('cron', minute='27, 57', hour='7-21')
@@ -224,12 +232,10 @@ async def on_message(message):
             try:
                 date = arrow.now().shift(days=day_offset)
                 result = get_availability(date)
+                print(result)
                 message = f"查詢結果：\n"
-                for room_id in room_list:
-                    message = f"{room_id}\n"
-                    message += availability_str(result[room_id])
-                    print(message)
-                    await channel.send(message)
+                print(availability_table_str(result))
+                await channel.send(availability_table_str(result))
             except:
                 await channel.send("完蛋 有鬼 出包")
 
