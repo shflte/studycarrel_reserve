@@ -53,7 +53,7 @@ def reserve(driver: webdriver.Chrome, room: str, time_slot: float) -> int:
     # find end of reservation
     time_slots_checkbox_2 = None
     offset = 0.5
-    while offset < 3.5:
+    while offset < 4:
         try:
             time_slot_str = time_slot_to_str(time_slot + offset)
             tmp_box = driver.find_element(By.XPATH, TIME_SLOT_PAGE.get_time_slots_block_xpath(room, time_slot_str))

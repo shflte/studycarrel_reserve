@@ -102,7 +102,7 @@ def reservation_str() -> str:
     return message
 
 scheduler = AsyncIOScheduler()
-@scheduler.scheduled_job('cron', minute='27, 57', hour='7-23')
+@scheduler.scheduled_job('cron', minute='27, 57', hour='7-21')
 async def regularly_cancel_reservation():
     cancel_result = cancel_reservation()
     channel = client.get_channel(int(SH_TEXT_CHANNEL_ID))
