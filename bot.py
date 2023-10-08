@@ -103,12 +103,12 @@ def reservation_str() -> str:
         message = "完蛋 有鬼 table壞了"
     return message
 
-def availability_table_str(availability: dict) -> str:
-    header = "|     |" + "|".join([f"{room_id:^5}" for room_id in availability.keys()]) + "|\n"
+def availability_table_str(date: arrow.arrow.Arrow, availability: dict) -> str:
+    header = "|" + date.format("MM/DD") + "|" + "|".join([f"{room_id:^5}" for room_id in availability.keys()]) + "|\n"
     body = ""
     for i in range(availability[room_list[0]].__len__()):
         time_slot_time = availability[room_list[0]][i][0]
-        if "```" + len(header) + len(body) + "```" > 1950:
+        if len("```" + header + body + "```") > 1950:
             body += "..."
             return "```" + header + body + "```"
 
@@ -228,14 +228,14 @@ async def on_message(message):
                 await channel.send("Σ(ﾟДﾟ；≡；ﾟдﾟ)")
                 await channel.send(help_message())
                 return
-            
+
             try:
                 date = arrow.now().shift(days=day_offset)
                 result = get_availability(date)
-                print(result)
                 message = f"查詢結果：\n"
-                print(availability_table_str(result))
-                await channel.send(availability_table_str(result))
+                table_str = availability_table_str(date, result)
+                print(table_str)
+                await channel.send(table_str)
             except:
                 await channel.send("完蛋 有鬼 出包")
 
