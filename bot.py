@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 import discord
-import argparse
 import arrow
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -22,13 +21,6 @@ SH_TEXT_CHANNEL_ID = os.getenv('SH_TEXT_CHANNEL_ID')
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
-
-# arg parser
-parser = argparse.ArgumentParser()
-parser.add_argument("-r", "--reserve", action="store_true", help="reserve a carrel")
-parser.add_argument("-c", "--cancel", action="store_true", help="cancel a reservation")
-parser.add_argument("-t", "--table", action="store_true", help="get reservation table")
-args = parser.parse_args()
 
 '''
 status of reserving:
@@ -121,7 +113,7 @@ def availability_table_str(date: arrow.arrow.Arrow, availability: dict) -> str:
 
 scheduler = AsyncIOScheduler()
 @scheduler.scheduled_job('cron', minute='27, 57', hour='7-21')
-async def regularly_cancel_reservation():
+async def cancel_reservation():
     status = 0
     channel = client.get_channel(int(SH_TEXT_CHANNEL_ID))
 
@@ -146,7 +138,6 @@ async def regularly_cancel_reservation():
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    print(args)
     scheduler.start()
     scheduler.print_jobs()
     await client.change_presence(activity=discord.Game(name="一種很厲害的遊戲"))
