@@ -122,28 +122,22 @@ def availability_table_str(date: arrow.arrow.Arrow, availability: dict) -> str:
 scheduler = AsyncIOScheduler()
 @scheduler.scheduled_job('cron', minute='27, 57', hour='7-21')
 async def regularly_cancel_reservation():
-    cancel_result = cancel_reservation()
+    status = 0
     channel = client.get_channel(int(SH_TEXT_CHANNEL_ID))
 
-    retry_count = 2
     error_message = ""
 
-    while retry_count > 0:
-        try:
-            status = cancel_result
-            break
-        except Exception as e:
-            error_message += f"Error: {e}\n"
-            print(error_message)
-        retry_count -= 1
-    if retry_count == 0:
+    try:
+        status = cancel_reservation()
+    except Exception as e:
+        error_message += f"Error: {e}\n"
+        print(error_message)
         status = -1
 
     message = "取消結果：\n"
     message += f"{cancel_symbol[status]}\n"
     message += reservation_str()
-    if retry_count == 0:
-        message += error_message
+    message += error_message
 
     print(message)
     await channel.send(message)
